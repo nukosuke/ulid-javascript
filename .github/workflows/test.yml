@@ -9,27 +9,31 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [16.x, 22.x]
+                node-version: [18.x, 22.x]
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
+            - run: corepack enable
             - name: Node.js specs ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-            - run: npm ci
-            - run: npm run build
-            - run: npm run test
+                  cache: 'yarn'            
+            - run: yarn install --immutable
+            - run: yarn build
+            - run: yarn test
     types:
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 node-version: [22.x]
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
+            - run: corepack enable
             - name: Type checks ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-            - run: npm ci
-            - run: npm run build
+                  cache: 'yarn'
+            - run: yarn install --immutable
+            - run: yarn build
             - run: npx --yes @arethetypeswrong/cli@latest --pack .
